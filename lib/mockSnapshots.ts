@@ -9,28 +9,35 @@ import type { RankedOrg, RankingMetric, Snapshot, SnapshotFixture } from "./type
 export const PETER_DAY = "2026-05-17";
 export const YTD_START = "2026-01-01";
 export const REMAINING_DAYS = 228;
+const DAYS_ELAPSED = 137;
 
-// Verified via GitHub GraphQL for @steipete, 2026-01-01 through 2026-05-17.
-export const VERIFIED_PETER_YTD_TOTAL = 203_761;
+// Verified live via GitHub GraphQL for @steipete, 2026-01-01 → 2026-05-17.
+// Reproduce with: gh api graphql -f query='{user(login:"steipete"){contributionsCollection(from:"2026-01-01T00:00:00Z",to:"2026-05-17T23:59:59Z"){contributionCalendar{totalContributions} restrictedContributionsCount totalCommitContributions totalPullRequestContributions totalIssueContributions totalPullRequestReviewContributions}}}'
+export const VERIFIED_PETER_YTD_TOTAL = 203_976;
 export const VERIFIED_PETER_RESTRICTED = 168_882;
 export const PETER_AVATAR_URL = "https://avatars.githubusercontent.com/u/58493?v=4";
 
-// Public org search can reliably count commits, PRs, and issues. Org-wide PR reviews
-// need a deeper collector, so this public preview excludes reviews from the denominator.
-export const PETER_PUBLIC_COMPARABLE: SnapshotFixture["peterYtd"] = {
-  total: 34_682,
-  commits: 33_875,
-  pullRequests: 772,
+// 1 Peter = @steipete's full 2026 YTD contribution graph (203,976 events).
+// 82.8% of his motion lives in restricted/private repos that GitHub's public
+// Search API cannot count for an org. The Peter denominator deliberately uses
+// his full graph total — orgs are measured public-only, so the comparison is
+// asymmetric by design and biased toward Peter. The trust panel calls this out.
+// Per-category counts below stay public-only (that's all we can break down),
+// so CategoryTable ratios compare apples-to-apples within each category.
+export const PETER_YTD_REFERENCE: SnapshotFixture["peterYtd"] = {
+  total: VERIFIED_PETER_YTD_TOTAL,
+  commits: 34_083,
+  pullRequests: 778,
   issues: 35,
-  reviews: 0,
+  reviews: 176,
   restricted: VERIFIED_PETER_RESTRICTED,
 };
 
-export const PETER_YEAR_END_COMPARABLE = 92_410;
-
 export function projectedYearEnd(total: number): number {
-  return Math.round((total / 137) * 365);
+  return Math.round((total / DAYS_ELAPSED) * 365);
 }
+
+export const PETER_YEAR_END_REFERENCE = projectedYearEnd(VERIFIED_PETER_YTD_TOTAL);
 
 function fixture(input: Omit<SnapshotFixture, "benchmarkUser" | "date" | "ytdStart">): SnapshotFixture {
   return {
@@ -65,7 +72,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 0,
       repositories: 0,
@@ -73,7 +80,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: 0,
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -101,7 +108,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 28,
       repositories: 5,
@@ -109,7 +116,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(4_518),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -137,7 +144,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 63,
       repositories: 412,
@@ -145,7 +152,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(11_661),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -173,7 +180,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 8_400,
       repositories: 6_200,
@@ -181,7 +188,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(374_313),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -209,7 +216,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 6_200,
       repositories: 4_300,
@@ -217,7 +224,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(133_767),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -245,7 +252,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors: 3_900,
       repositories: 2_100,
@@ -253,7 +260,7 @@ export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(65_491),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -330,7 +337,7 @@ export const PETER_BASELINE = {
   totalPeters: 1,
   densityPeters: 1,
   momentumPeters: 1,
-  comparableYtdTotal: PETER_PUBLIC_COMPARABLE.total,
+  comparableYtdTotal: PETER_YTD_REFERENCE.total,
   verifiedYtdTotal: VERIFIED_PETER_YTD_TOTAL,
   restrictedYtdTotal: VERIFIED_PETER_RESTRICTED,
   ytdStart: YTD_START,

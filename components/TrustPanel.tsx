@@ -14,16 +14,29 @@ export function TrustPanel() {
         <div className="px-5 sm:px-6 pb-6 pt-5 grid gap-4 md:grid-cols-2 text-sm text-zinc-400 leading-relaxed border-t border-white/10">
           <div className="rounded-2xl border border-white/10 bg-black/25 p-4">
             <p className="text-xs uppercase tracking-wide text-zinc-500 font-semibold mb-2">
-              Included in current public preview
+              How 1 Peter is defined
             </p>
             <p className="mb-3 text-xs text-zinc-500">
-              Window: 2026 YTD, starting Jan 1, 2026. This is the “post-AI-rev” benchmark period.
+              Window: 2026 YTD, starting Jan 1, 2026.
             </p>
             <ul className="list-disc list-inside space-y-1">
-              <li>Commits</li>
-              <li>Pull requests opened</li>
-              <li>Issues opened</li>
-              <li>Peter&apos;s verified public comparable baseline excludes restricted/private counts</li>
+              <li>
+                <span className="text-zinc-200 font-medium">1 Peter = 203,976</span>{" "}
+                verified contributions on @steipete&apos;s 2026 YTD graph (live via GitHub GraphQL).
+              </li>
+              <li>
+                <span className="text-zinc-300">82.8%</span> of Peter&apos;s motion (168,882) is in
+                restricted/private repos — visible on his profile graph, invisible to public search.
+              </li>
+              <li>
+                Org totals are public-search only: commits + PRs + issues. Private-repo work
+                inside orgs is not counted.
+              </li>
+              <li>
+                The comparison is therefore <span className="text-zinc-200">asymmetric by design</span>{" "}
+                — it tilts toward Peter. That asymmetry is the point: it forces the question of what
+                orgs are willing to expose.
+              </li>
             </ul>
           </div>
           <div className="rounded-2xl border border-white/10 bg-black/25 p-4">

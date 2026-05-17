@@ -28,6 +28,11 @@ export function buildScores(fixture: SnapshotFixture): Scores {
   );
   const momentumPeters = projectedYearEndIndex;
   const catchUpGap = fixture.forecast.peterYearEndTotal - fixture.orgYtd.total;
+  // Only surface a catch-up pace when the org is currently behind Peter.
+  // Otherwise giants like Microsoft (already ahead today) get a misleading
+  // "must add N/day" alert just because Peter's projected year-end exceeds
+  // the org's *current* YTD total — that's apples-to-pears.
+  const orgIsCurrentlyBehind = fixture.orgYtd.total < fixture.peterYtd.total;
 
   return {
     totalPeters: peterIndex,
@@ -38,7 +43,7 @@ export function buildScores(fixture: SnapshotFixture): Scores {
     gap,
     projectedYearEndIndex,
     requiredDailyPaceToCatchPeter:
-      catchUpGap > 0 && fixture.forecast.remainingDays > 0
+      orgIsCurrentlyBehind && catchUpGap > 0 && fixture.forecast.remainingDays > 0
         ? Math.ceil(catchUpGap / fixture.forecast.remainingDays)
         : undefined,
   };
@@ -171,9 +176,13 @@ export type DensityTier =
   | "Check For Automation";
 
 export function densityTierLabel(peterDensity: number): DensityTier {
-  if (peterDensity < 0.005) return "Calendar-Driven Development";
-  if (peterDensity < 0.02) return "Normal Human Org";
-  if (peterDensity < 0.05) return "Very Serious Builders";
+  // Anchored to 1 Peter = 203,976 contributions (verified full graph).
+  // Peter himself is 1.0 P/engineer by definition. Real orgs land 4–6 orders
+  // of magnitude below that. Thresholds chosen so hyperscalers fall in the
+  // bottom two tiers and small-but-prolific shops earn the top label.
+  if (peterDensity < 0.0001) return "Calendar-Driven Development";
+  if (peterDensity < 0.0005) return "Normal Human Org";
+  if (peterDensity < 0.005) return "Very Serious Builders";
   return "Check For Automation";
 }
 

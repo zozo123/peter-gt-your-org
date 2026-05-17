@@ -3,8 +3,8 @@ import "server-only";
 import {
   buildRankedSnapshots,
   MOCK_FIXTURES,
-  PETER_PUBLIC_COMPARABLE,
-  PETER_YEAR_END_COMPARABLE,
+  PETER_YEAR_END_REFERENCE,
+  PETER_YTD_REFERENCE,
   projectedYearEnd,
 } from "./mockSnapshots";
 import type { Snapshot, SnapshotFixture } from "./types";
@@ -84,7 +84,7 @@ async function getIncredibuildFixture(token: string): Promise<SnapshotFixture> {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
+    peterYtd: { ...PETER_YTD_REFERENCE },
     orgMeta: {
       activeContributors,
       repositories,
@@ -92,7 +92,7 @@ async function getIncredibuildFixture(token: string): Promise<SnapshotFixture> {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(total),
-      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
       remainingDays: MOCK_FIXTURES.incredibuild.forecast.remainingDays,
     },
   };
