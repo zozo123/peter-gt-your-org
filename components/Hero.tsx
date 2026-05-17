@@ -40,7 +40,7 @@ export function Hero({
           <p className="max-w-2xl text-lg sm:text-xl text-zinc-300 leading-relaxed">
             Rank your GitHub org against{" "}
             <span className="text-white font-medium">@steipete</span> in one absurd,
-            useful unit. Funny enough to post, concrete enough to compare.
+            useful unit. Public preview counts verified 2026 YTD commits, PRs, and issues.
           </p>
         </div>
 
@@ -97,9 +97,9 @@ export function Hero({
           >
             View public ranking
           </a>
-          <p className="text-xs text-zinc-500 sm:max-w-[250px] sm:text-left leading-snug">
-            Public benchmark preview. Read-only org installs later improve coverage without
-            ranking individuals.
+          <p className="text-xs text-zinc-500 sm:max-w-[270px] sm:text-left leading-snug">
+            Current mode is public-data only. Read-only org installs later add private coverage
+            and PR reviews without ranking individuals.
           </p>
         </div>
 
@@ -163,8 +163,8 @@ export function Hero({
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-zinc-300">
-              Incredibuild, Islo.dev, Supabase, Microsoft, Google, and AWS anchor the preview.
-              Your org slots into the same public ranking.
+              Verified public rows rank immediately. Incredibuild stays as a “connect the real
+              org” example until its GitHub slug is known.
             </div>
           </div>
         </div>

@@ -21,6 +21,40 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
       ? `+${snapshot.scores.gap.toLocaleString()}`
       : snapshot.scores.gap.toLocaleString();
 
+  if (needsConnection) {
+    return (
+      <section className="relative overflow-hidden rounded-[2.25rem] border border-amber-300/20 bg-[linear-gradient(145deg,rgba(251,191,36,0.11),rgba(255,255,255,0.035))] p-5 sm:p-8 shadow-[0_36px_120px_rgba(0,0,0,0.55)] backdrop-blur-xl">
+        <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-300/15 blur-3xl" />
+        <div className="relative grid gap-7 lg:grid-cols-[1.05fr_0.95fr] lg:items-center">
+          <div>
+            <p className="text-xs uppercase tracking-[0.28em] text-amber-200/80 font-semibold">
+              Verification needed
+            </p>
+            <h2 className="mt-3 text-4xl sm:text-6xl font-semibold tracking-[-0.06em] leading-[0.9] text-white">
+              {snapshot.orgDisplayName} needs the real GitHub org.
+            </h2>
+            <p className="mt-5 max-w-2xl text-sm sm:text-base leading-relaxed text-zinc-300">
+              I could not verify a public GitHub organization at{" "}
+              <span className="font-medium text-white">@incredibuild</span>. This is the right
+              product behavior: do not invent a Peter score when the org identity is unknown.
+            </p>
+          </div>
+
+          <div className="rounded-[1.75rem] border border-white/10 bg-black/35 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
+            <p className="text-xs uppercase tracking-[0.22em] text-zinc-500 font-semibold">
+              What we need
+            </p>
+            <div className="mt-4 grid gap-3">
+              <VerifyStep number="1" title="GitHub org slug" text="Example: supabase, islo-labs, awslabs." />
+              <VerifyStep number="2" title="Org family mapping" text="For Google/AWS-scale orgs, define which public orgs count." />
+              <VerifyStep number="3" title="Read-only install later" text="Private repos and reviews require authenticated collection." />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
   return (
     <section className="relative overflow-hidden rounded-[2.25rem] border border-white/12 bg-[linear-gradient(145deg,rgba(255,255,255,0.12),rgba(255,255,255,0.035))] p-5 sm:p-8 shadow-[0_36px_120px_rgba(0,0,0,0.55)] backdrop-blur-xl">
       <div className="absolute -right-24 -top-24 h-72 w-72 rounded-full bg-amber-300/15 blur-3xl" />
@@ -71,7 +105,6 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
             <Pill label="Density rank" value={`#${snapshot.scores.densityRank ?? "?"}`} />
             <Pill label="YTD pace" value={`#${snapshot.scores.momentumRank ?? "?"}`} />
             <Pill label="Tier" value={orgTier} />
-            <Pill label="Density" value={`${snapshot.scores.peterDensity.toFixed(3)} / engineer`} />
             <Pill label="Cohort" value={snapshot.cohort.label} />
           </div>
         </div>
@@ -117,7 +150,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
         </div>
       </div>
 
-      <div className="relative mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
+      <div className="relative mt-8 grid grid-cols-1 sm:grid-cols-4 gap-4">
         <MetricCard
           label="Org activity"
           value={snapshot.orgYtd.total.toLocaleString()}
@@ -139,6 +172,12 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
               : "Peter still has the lead"
           }
           accent={snapshot.scores.gap >= 0 ? "emerald" : "rose"}
+        />
+        <MetricCard
+          label="Peter Density"
+          value={snapshot.scores.peterDensity.toFixed(3)}
+          hint={`${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors`}
+          accent="zinc"
         />
       </div>
 
@@ -188,6 +227,28 @@ function Pill(props: { label: string; value: string }) {
     <div className="rounded-full border border-white/10 bg-black/25 px-3 py-1.5 text-xs text-zinc-300">
       <span className="text-zinc-500">{props.label}:</span>{" "}
       <span className="font-medium text-white">{props.value}</span>
+    </div>
+  );
+}
+
+function VerifyStep({
+  number,
+  title,
+  text,
+}: {
+  number: string;
+  title: string;
+  text: string;
+}) {
+  return (
+    <div className="flex gap-3 rounded-2xl border border-white/10 bg-white/[0.035] p-3">
+      <span className="grid size-8 shrink-0 place-items-center rounded-full bg-amber-300 text-xs font-semibold text-black">
+        {number}
+      </span>
+      <div>
+        <p className="text-sm font-semibold text-white">{title}</p>
+        <p className="mt-0.5 text-xs leading-relaxed text-zinc-500">{text}</p>
+      </div>
     </div>
   );
 }

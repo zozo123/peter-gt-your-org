@@ -34,8 +34,8 @@ const CHIP_META: Record<
 export function PeterDemo() {
   const demoAnchorRef = useRef<HTMLElement>(null);
 
-  const [resolvedSlug, setResolvedSlug] = useState("incredibuild");
-  const [inputValue, setInputValue] = useState("incredibuild");
+  const [resolvedSlug, setResolvedSlug] = useState("supabase");
+  const [inputValue, setInputValue] = useState("supabase");
   const [lookupError, setLookupError] = useState<string | null>(null);
 
   const snapshot = useMemo(() => getMockSnapshot(resolvedSlug), [resolvedSlug]);

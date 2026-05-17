@@ -136,15 +136,28 @@ function LeaderboardRow({
           <Badge tone={row.visibility.confidence}>{confidenceLabel(row.visibility.confidence)}</Badge>
         </div>
         <p className="mt-1 text-xs text-zinc-500">
-          {row.activeContributors.toLocaleString()} active contributors ·{" "}
-          {(row.visibility.completeness * 100).toFixed(0)}% public coverage estimate
+          {row.visibility.completeness === 0
+            ? "Needs verified GitHub org slug"
+            : `${row.activeContributors.toLocaleString()} active contributors · ${(row.visibility.completeness * 100).toFixed(0)}% public coverage estimate`}
         </p>
       </div>
 
       <div className="col-span-2 grid grid-cols-3 gap-3 sm:col-span-1 sm:min-w-[310px]">
-        <Metric label="Total" value={row.totalPeters.toFixed(2)} active={metric === "totalPeters"} />
-        <Metric label="Density" value={row.densityPeters.toFixed(3)} active={metric === "densityPeters"} />
-        <Metric label="Pace" value={row.momentumPeters.toFixed(2)} active={metric === "momentumPeters"} />
+        <Metric
+          label="Total"
+          value={row.visibility.completeness === 0 ? "—" : row.totalPeters.toFixed(2)}
+          active={metric === "totalPeters"}
+        />
+        <Metric
+          label="Density"
+          value={row.visibility.completeness === 0 ? "—" : row.densityPeters.toFixed(3)}
+          active={metric === "densityPeters"}
+        />
+        <Metric
+          label="Pace"
+          value={row.visibility.completeness === 0 ? "—" : row.momentumPeters.toFixed(2)}
+          active={metric === "momentumPeters"}
+        />
       </div>
     </div>
   );
