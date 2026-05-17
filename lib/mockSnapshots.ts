@@ -6,17 +6,18 @@ import {
 } from "./peterMath";
 import type { RankedOrg, RankingMetric, Snapshot, SnapshotFixture } from "./types";
 
-const PETER_DAY = "2026-05-17";
-const YTD_START = "2026-01-01";
-const REMAINING_DAYS = 228;
+export const PETER_DAY = "2026-05-17";
+export const YTD_START = "2026-01-01";
+export const REMAINING_DAYS = 228;
 
 // Verified via GitHub GraphQL for @steipete, 2026-01-01 through 2026-05-17.
 export const VERIFIED_PETER_YTD_TOTAL = 203_761;
 export const VERIFIED_PETER_RESTRICTED = 168_882;
+export const PETER_AVATAR_URL = "https://avatars.githubusercontent.com/u/58493?v=4";
 
 // Public org search can reliably count commits, PRs, and issues. Org-wide PR reviews
 // need a deeper collector, so this public preview excludes reviews from the denominator.
-const peterPublicComparable: SnapshotFixture["peterYtd"] = {
+export const PETER_PUBLIC_COMPARABLE: SnapshotFixture["peterYtd"] = {
   total: 34_682,
   commits: 33_875,
   pullRequests: 772,
@@ -25,9 +26,9 @@ const peterPublicComparable: SnapshotFixture["peterYtd"] = {
   restricted: VERIFIED_PETER_RESTRICTED,
 };
 
-const peterYearEndComparable = 92_410;
+export const PETER_YEAR_END_COMPARABLE = 92_410;
 
-function projectedYearEnd(total: number): number {
+export function projectedYearEnd(total: number): number {
   return Math.round((total / 137) * 365);
 }
 
@@ -40,7 +41,7 @@ function fixture(input: Omit<SnapshotFixture, "benchmarkUser" | "date" | "ytdSta
   };
 }
 
-const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
+export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
   incredibuild: fixture({
     org: "incredibuild",
     orgDisplayName: "Incredibuild",
@@ -64,7 +65,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 0,
       repositories: 0,
@@ -72,7 +73,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: 0,
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -100,7 +101,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 28,
       repositories: 5,
@@ -108,7 +109,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(4_518),
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -136,7 +137,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 63,
       repositories: 412,
@@ -144,7 +145,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(11_661),
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -172,7 +173,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 8_400,
       repositories: 6_200,
@@ -180,7 +181,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(374_313),
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -208,7 +209,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 6_200,
       repositories: 4_300,
@@ -216,7 +217,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(133_767),
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
@@ -244,7 +245,7 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
       reviews: 0,
       other: 0,
     },
-    peterYtd: { ...peterPublicComparable },
+    peterYtd: { ...PETER_PUBLIC_COMPARABLE },
     orgMeta: {
       activeContributors: 3_900,
       repositories: 2_100,
@@ -252,15 +253,19 @@ const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
     },
     forecast: {
       orgYearEndTotal: projectedYearEnd(65_491),
-      peterYearEndTotal: peterYearEndComparable,
+      peterYearEndTotal: PETER_YEAR_END_COMPARABLE,
       remainingDays: REMAINING_DAYS,
     },
   }),
 };
 
-const RANKED_SNAPSHOTS = applyRanks(
-  Object.values(MOCK_FIXTURES).map((entry) => buildSnapshot(entry)),
-);
+export function buildRankedSnapshots(
+  fixtures: Record<string, SnapshotFixture> = MOCK_FIXTURES,
+): Snapshot[] {
+  return applyRanks(Object.values(fixtures).map((entry) => buildSnapshot(entry)));
+}
+
+const RANKED_SNAPSHOTS = buildRankedSnapshots();
 
 const SNAPSHOTS_BY_SLUG = Object.fromEntries(
   RANKED_SNAPSHOTS.map((snapshot) => [snapshot.org, snapshot]),
@@ -284,9 +289,21 @@ const ORG_ALIASES: Record<string, string> = {
   gcp: "google",
 };
 
-export function getMockSnapshot(slug: string): Snapshot | undefined {
+export function resolveOrgSlug(slug: string): string {
   const key = slug.trim().toLowerCase().replace(/^@/, "");
-  return SNAPSHOTS_BY_SLUG[ORG_ALIASES[key] ?? key];
+  return ORG_ALIASES[key] ?? key;
+}
+
+export function getSnapshotBySlug(
+  slug: string,
+  snapshots: Snapshot[] = RANKED_SNAPSHOTS,
+): Snapshot | undefined {
+  const key = resolveOrgSlug(slug);
+  return snapshots.find((snapshot) => snapshot.org === key);
+}
+
+export function getMockSnapshot(slug: string): Snapshot | undefined {
+  return SNAPSHOTS_BY_SLUG[resolveOrgSlug(slug)];
 }
 
 export function getAllSnapshots(): Snapshot[] {
@@ -294,7 +311,14 @@ export function getAllSnapshots(): Snapshot[] {
 }
 
 export function getLeaderboardRows(metric: RankingMetric): RankedOrg[] {
-  return sortByMetric(RANKED_SNAPSHOTS, metric).map((snapshot) =>
+  return getLeaderboardRowsForSnapshots(RANKED_SNAPSHOTS, metric);
+}
+
+export function getLeaderboardRowsForSnapshots(
+  snapshots: Snapshot[],
+  metric: RankingMetric,
+): RankedOrg[] {
+  return sortByMetric(snapshots, metric).map((snapshot) =>
     toRankedOrg(snapshot, metric),
   );
 }
@@ -302,10 +326,11 @@ export function getLeaderboardRows(metric: RankingMetric): RankedOrg[] {
 export const PETER_BASELINE = {
   org: "steipete",
   orgDisplayName: "Peter",
+  avatarUrl: PETER_AVATAR_URL,
   totalPeters: 1,
   densityPeters: 1,
   momentumPeters: 1,
-  comparableYtdTotal: peterPublicComparable.total,
+  comparableYtdTotal: PETER_PUBLIC_COMPARABLE.total,
   verifiedYtdTotal: VERIFIED_PETER_YTD_TOTAL,
   restrictedYtdTotal: VERIFIED_PETER_RESTRICTED,
   ytdStart: YTD_START,

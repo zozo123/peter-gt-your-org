@@ -1,3 +1,5 @@
+import Image from "next/image";
+import { PETER_AVATAR_URL } from "@/lib/mockSnapshots";
 import { categoryPeterIndex } from "@/lib/peterMath";
 import type { Snapshot } from "@/lib/types";
 
@@ -41,7 +43,13 @@ export function OrgComparison({ snapshots }: Props) {
           <div className="mt-6 space-y-3">
             <LadderRow rank={`#${incredibuild.scores.totalRank}`} name="Incredibuild" value={`${incredibuild.scores.totalPeters.toFixed(2)} Peters`} />
             <LadderRow rank={`#${islo.scores.totalRank}`} name="Islo.dev" value={`${islo.scores.totalPeters.toFixed(2)} Peters`} />
-            <LadderRow rank="unit" name="Peter" value="1.00 Peter" muted />
+            <LadderRow
+              rank="unit"
+              name="Peter"
+              value="1.00 Peter"
+              muted
+              avatarUrl={PETER_AVATAR_URL}
+            />
           </div>
         </div>
 
@@ -59,7 +67,13 @@ export function OrgComparison({ snapshots }: Props) {
               max={max}
               tone="bg-sky-200"
             />
-            <VerticalBar label="Peter" value={1} max={max} tone="bg-zinc-200" />
+            <VerticalBar
+              label="Peter"
+              value={1}
+              max={max}
+              tone="bg-zinc-200"
+              avatarUrl={PETER_AVATAR_URL}
+            />
           </div>
 
           <div className="mt-7 grid gap-3">
@@ -96,17 +110,29 @@ function LadderRow({
   name,
   value,
   muted,
+  avatarUrl,
 }: {
   rank: string;
   name: string;
   value: string;
   muted?: boolean;
+  avatarUrl?: string;
 }) {
   return (
     <div className="flex items-center justify-between gap-4 rounded-2xl border border-white/10 bg-black/25 px-4 py-3">
       <div className="flex items-center gap-3">
-        <span className={`grid size-9 place-items-center rounded-full text-xs font-semibold ${muted ? "bg-white/[0.04] text-zinc-500" : "bg-amber-300 text-black"}`}>
-          {rank}
+        <span className={`relative grid size-9 place-items-center overflow-hidden rounded-full text-xs font-semibold ${muted ? "bg-white/[0.04] text-zinc-500" : "bg-amber-300 text-black"}`}>
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt="@steipete GitHub avatar"
+              fill
+              sizes="36px"
+              className="object-cover"
+            />
+          ) : (
+            rank
+          )}
         </span>
         <span className="text-sm font-semibold text-white">{name}</span>
       </div>
@@ -120,11 +146,13 @@ function VerticalBar({
   value,
   max,
   tone,
+  avatarUrl,
 }: {
   label: string;
   value: number;
   max: number;
   tone: string;
+  avatarUrl?: string;
 }) {
   const height = `${Math.max(18, (value / max) * 100)}%`;
 
@@ -137,7 +165,20 @@ function VerticalBar({
         />
       </div>
       <div className="text-center">
-        <p className="text-sm font-semibold text-white">{label}</p>
+        <p className="inline-flex items-center justify-center gap-2 text-sm font-semibold text-white">
+          {avatarUrl && (
+            <span className="relative size-5 overflow-hidden rounded-full border border-amber-300/30">
+              <Image
+                src={avatarUrl}
+                alt="@steipete GitHub avatar"
+                fill
+                sizes="20px"
+                className="object-cover"
+              />
+            </span>
+          )}
+          {label}
+        </p>
         <p className="text-xs tabular-nums text-zinc-500">{value.toFixed(2)} Peters</p>
       </div>
     </div>

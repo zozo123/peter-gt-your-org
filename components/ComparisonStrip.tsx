@@ -1,8 +1,10 @@
+import Image from "next/image";
 import type { Snapshot } from "@/lib/types";
 import {
   densityTierLabel,
   orgTierLabel,
 } from "@/lib/peterMath";
+import { PETER_AVATAR_URL } from "@/lib/mockSnapshots";
 
 type Props = {
   snapshot: Snapshot;
@@ -13,6 +15,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
   const orgTier = orgTierLabel(snapshot.scores.peterIndex);
   const densityTier = densityTierLabel(snapshot.scores.peterDensity);
   const needsConnection = snapshot.visibility.completeness === 0;
+  const hasContributorCount = snapshot.orgMeta.activeContributors > 0;
   const orgBar = Math.min(100, Math.max(18, snapshot.scores.peterIndex * 62));
   const peterBar = Math.min(100, Math.max(18, (1 / Math.max(snapshot.scores.peterIndex, 1)) * 62));
   const cohortBar = Math.min(100, Math.max(18, (cohortMedianPeters ?? 0.7) * 62));
@@ -34,9 +37,8 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
               {snapshot.orgDisplayName} needs the real GitHub org.
             </h2>
             <p className="mt-5 max-w-2xl text-sm sm:text-base leading-relaxed text-zinc-300">
-              I could not verify a public GitHub organization at{" "}
-              <span className="font-medium text-white">@incredibuild</span>. This is the right
-              product behavior: do not invent a Peter score when the org identity is unknown.
+              {snapshot.visibility.note} This is the right product behavior: do not invent a
+              Peter score when the org identity is unknown or the token cannot read it.
             </p>
           </div>
 
@@ -134,6 +136,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
               value="1.00 Peter"
               width={peterBar}
               tone="bg-zinc-200"
+              avatarUrl={PETER_AVATAR_URL}
             />
             <RaceBar
               label={`${snapshot.cohort.label} median`}
@@ -175,8 +178,12 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
         />
         <MetricCard
           label="Peter Density"
-          value={snapshot.scores.peterDensity.toFixed(3)}
-          hint={`${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors`}
+          value={hasContributorCount ? snapshot.scores.peterDensity.toFixed(3) : "Add headcount"}
+          hint={
+            hasContributorCount
+              ? `${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors`
+              : "Set INCREDIBUILD_ACTIVE_CONTRIBUTORS"
+          }
           accent="zinc"
         />
       </div>
@@ -198,13 +205,17 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
             Peter Density (per active contributor)
           </p>
           <p className="text-lg font-semibold text-white">
-            {snapshot.scores.peterDensity.toFixed(3)} Peters / engineer
+            {hasContributorCount
+              ? `${snapshot.scores.peterDensity.toFixed(3)} Peters / engineer`
+              : "Needs contributor count"}
           </p>
           <p className="text-sm text-zinc-400">
-            {snapshot.orgMeta.activeContributors.toLocaleString()} active contributors ·{" "}
+            {hasContributorCount
+              ? `${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors · `
+              : "Set INCREDIBUILD_ACTIVE_CONTRIBUTORS · "}
             {snapshot.orgMeta.repositories.toLocaleString()} repos ·{" "}
-            {snapshot.orgMeta.privateReposIncluded ? "includes private" : "public snapshot"} ·{" "}
-            {densityTier}
+            {snapshot.orgMeta.privateReposIncluded ? "includes private" : "public snapshot"}
+            {hasContributorCount ? ` · ${densityTier}` : ""}
           </p>
         </div>
       </div>
@@ -253,11 +264,30 @@ function VerifyStep({
   );
 }
 
-function RaceBar(props: { label: string; value: string; width: number; tone: string }) {
+function RaceBar(props: {
+  label: string;
+  value: string;
+  width: number;
+  tone: string;
+  avatarUrl?: string;
+}) {
   return (
     <div>
       <div className="mb-2 flex items-center justify-between gap-3 text-sm">
-        <span className="font-medium text-white">{props.label}</span>
+        <span className="flex items-center gap-2 font-medium text-white">
+          {props.avatarUrl && (
+            <span className="relative size-5 overflow-hidden rounded-full border border-amber-300/30">
+              <Image
+                src={props.avatarUrl}
+                alt="@steipete GitHub avatar"
+                fill
+                sizes="20px"
+                className="object-cover"
+              />
+            </span>
+          )}
+          {props.label}
+        </span>
         <span className="text-zinc-400">{props.value}</span>
       </div>
       <div className="h-3 overflow-hidden rounded-full bg-white/[0.07]">

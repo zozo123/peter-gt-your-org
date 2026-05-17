@@ -1,13 +1,19 @@
 "use client";
 
+import Image from "next/image";
 import { useMemo, useState } from "react";
 import type { ReactNode } from "react";
-import { getLeaderboardRows, PETER_BASELINE } from "@/lib/mockSnapshots";
+import {
+  getAllSnapshots,
+  getLeaderboardRowsForSnapshots,
+  PETER_BASELINE,
+} from "@/lib/mockSnapshots";
 import { confidenceLabel } from "@/lib/peterMath";
-import type { RankedOrg, RankingMetric } from "@/lib/types";
+import type { RankedOrg, RankingMetric, Snapshot } from "@/lib/types";
 
 type Props = {
   activeOrg: string;
+  snapshots?: Snapshot[];
 };
 
 const TABS: { metric: RankingMetric; label: string; hint: string }[] = [
@@ -28,9 +34,16 @@ const TABS: { metric: RankingMetric; label: string; hint: string }[] = [
   },
 ];
 
-export function Leaderboard({ activeOrg }: Props) {
+export function Leaderboard({ activeOrg, snapshots: configuredSnapshots }: Props) {
   const [metric, setMetric] = useState<RankingMetric>("totalPeters");
-  const rows = useMemo(() => getLeaderboardRows(metric), [metric]);
+  const snapshots = useMemo(
+    () => configuredSnapshots ?? getAllSnapshots(),
+    [configuredSnapshots],
+  );
+  const rows = useMemo(
+    () => getLeaderboardRowsForSnapshots(snapshots, metric),
+    [metric, snapshots],
+  );
   const activeTab = TABS.find((tab) => tab.metric === metric) ?? TABS[0];
 
   return (
@@ -84,8 +97,14 @@ export function Leaderboard({ activeOrg }: Props) {
           />
         ))}
         <div className="grid grid-cols-[auto_1fr_auto] items-center gap-4 px-5 py-4 sm:px-6 bg-white/[0.025]">
-          <div className="grid size-10 place-items-center rounded-full border border-white/10 bg-white/[0.04] text-xs font-semibold text-zinc-400">
-            base
+          <div className="relative size-10 overflow-hidden rounded-full border border-amber-300/30 bg-white/[0.04] shadow-[0_0_28px_rgba(251,191,36,0.16)]">
+            <Image
+              src={PETER_BASELINE.avatarUrl}
+              alt="@steipete GitHub avatar"
+              fill
+              sizes="40px"
+              className="object-cover"
+            />
           </div>
           <div>
             <p className="text-sm font-semibold text-white">@steipete</p>
@@ -150,7 +169,11 @@ function LeaderboardRow({
         />
         <Metric
           label="Density"
-          value={row.visibility.completeness === 0 ? "—" : row.densityPeters.toFixed(3)}
+          value={
+            row.visibility.completeness === 0 || row.activeContributors === 0
+              ? "—"
+              : row.densityPeters.toFixed(3)
+          }
           active={metric === "densityPeters"}
         />
         <Metric

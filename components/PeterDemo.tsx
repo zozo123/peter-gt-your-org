@@ -11,10 +11,11 @@ import { TrustPanel } from "@/components/TrustPanel";
 import {
   DEMO_ORG_ORDER,
   getAllSnapshots,
-  getLeaderboardRows,
-  getMockSnapshot,
+  getLeaderboardRowsForSnapshots,
+  getSnapshotBySlug,
 } from "@/lib/mockSnapshots";
 import { buildDiagnosis } from "@/lib/peterMath";
+import type { Snapshot } from "@/lib/types";
 
 const CHIP_META: Record<
   string,
@@ -31,17 +32,34 @@ const CHIP_META: Record<
   demo: { label: "Acme Corp", hint: "Catch-up storyline" },
 };
 
-export function PeterDemo() {
-  const demoAnchorRef = useRef<HTMLElement>(null);
+type Props = {
+  defaultOrg?: string;
+  snapshots?: Snapshot[];
+};
 
-  const [resolvedSlug, setResolvedSlug] = useState("supabase");
-  const [inputValue, setInputValue] = useState("supabase");
+export function PeterDemo({
+  defaultOrg = "supabase",
+  snapshots: configuredSnapshots,
+}: Props) {
+  const demoAnchorRef = useRef<HTMLElement>(null);
+  const allSnapshots = useMemo(
+    () => configuredSnapshots ?? getAllSnapshots(),
+    [configuredSnapshots],
+  );
+
+  const [resolvedSlug, setResolvedSlug] = useState(defaultOrg);
+  const [inputValue, setInputValue] = useState(defaultOrg);
   const [lookupError, setLookupError] = useState<string | null>(null);
 
-  const snapshot = useMemo(() => getMockSnapshot(resolvedSlug), [resolvedSlug]);
+  const snapshot = useMemo(
+    () => getSnapshotBySlug(resolvedSlug, allSnapshots),
+    [allSnapshots, resolvedSlug],
+  );
   const diagnosis = snapshot ? buildDiagnosis(snapshot) : "";
-  const allSnapshots = useMemo(() => getAllSnapshots(), []);
-  const totalRows = useMemo(() => getLeaderboardRows("totalPeters"), []);
+  const totalRows = useMemo(
+    () => getLeaderboardRowsForSnapshots(allSnapshots, "totalPeters"),
+    [allSnapshots],
+  );
   const cohortMedianPeters = useMemo(() => {
     if (!snapshot) return undefined;
     const peers = allSnapshots
@@ -62,10 +80,10 @@ export function PeterDemo() {
 
   function tryResolve(raw: string): boolean {
     const normalized = raw.trim().toLowerCase().replace(/^@/, "");
-    const snap = getMockSnapshot(normalized);
+    const snap = getSnapshotBySlug(normalized, allSnapshots);
     if (snap) {
-      setResolvedSlug(normalized);
-      setInputValue(normalized);
+      setResolvedSlug(snap.org);
+      setInputValue(snap.org);
       setLookupError(null);
       return true;
     }
@@ -130,7 +148,7 @@ export function PeterDemo() {
                 snapshot={snapshot}
                 cohortMedianPeters={cohortMedianPeters}
               />
-              <Leaderboard activeOrg={resolvedSlug} />
+              <Leaderboard activeOrg={resolvedSlug} snapshots={allSnapshots} />
               <OrgComparison snapshots={allSnapshots} />
 
               <blockquote className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-black/35 px-5 py-5 sm:px-6 text-sm sm:text-base leading-relaxed text-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
