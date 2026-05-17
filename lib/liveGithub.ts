@@ -6,11 +6,12 @@ import {
   PETER_YEAR_END_REFERENCE,
   PETER_YTD_REFERENCE,
   projectedYearEnd,
+  YTD_START,
+  REMAINING_DAYS,
 } from "./mockSnapshots";
 import type { Snapshot, SnapshotFixture } from "./types";
 
 const GITHUB_API = "https://api.github.com";
-const DEFAULT_INCREDIBUILD_ORG = "Incredibuild-RND";
 
 type GitHubOrg = {
   login?: string;
@@ -26,55 +27,68 @@ type GitHubSearchResponse = {
 
 export async function getConfiguredSnapshots(): Promise<Snapshot[]> {
   const token = githubToken();
-  if (!token) {
+  const orgSlug = envString("GITHUB_ORG");
+  if (!token || !orgSlug) {
     return buildRankedSnapshots();
   }
 
-  const incredibuild = await getIncredibuildFixture(token).catch((error: unknown) =>
-    getIncredibuildErrorFixture(errorMessage(error)),
+  const slug = normalizeSlug(orgSlug);
+  const live = await getLiveOrgFixture(token, slug).catch((error: unknown) =>
+    getLiveOrgErrorFixture(slug, errorMessage(error)),
   );
 
-  return buildRankedSnapshots({
-    ...MOCK_FIXTURES,
-    incredibuild,
-  });
+  return buildRankedSnapshots({ ...MOCK_FIXTURES, [slug]: live });
 }
 
 export function hasGithubConnection(): boolean {
-  return Boolean(githubToken());
+  return Boolean(githubToken() && envString("GITHUB_ORG"));
 }
 
-async function getIncredibuildFixture(token: string): Promise<SnapshotFixture> {
-  const orgSlug = envString("INCREDIBUILD_GITHUB_ORG") ?? DEFAULT_INCREDIBUILD_ORG;
-  const [org, commits, pullRequests, issues, repositoryCount] =
-    await Promise.all([
-      githubJson<GitHubOrg>(token, `/orgs/${orgSlug}`),
-      searchTotal(token, "/search/commits", `org:${orgSlug} committer-date:>=${MOCK_FIXTURES.incredibuild.ytdStart}`),
-      searchTotal(token, "/search/issues", `org:${orgSlug} type:pr created:>=${MOCK_FIXTURES.incredibuild.ytdStart}`),
-      searchTotal(token, "/search/issues", `org:${orgSlug} type:issue created:>=${MOCK_FIXTURES.incredibuild.ytdStart}`),
-      paginatedCount(token, `/orgs/${orgSlug}/repos`, { type: "all" }),
-    ]);
+export function configuredOrgSlug(): string | undefined {
+  const slug = envString("GITHUB_ORG");
+  return slug ? normalizeSlug(slug) : undefined;
+}
+
+async function getLiveOrgFixture(token: string, slug: string): Promise<SnapshotFixture> {
+  const [org, commits, pullRequests, issues, repositoryCount] = await Promise.all([
+    githubJson<GitHubOrg>(token, `/orgs/${slug}`),
+    searchTotal(token, "/search/commits", `org:${slug} committer-date:>=${YTD_START}`),
+    searchTotal(token, "/search/issues", `org:${slug} type:pr created:>=${YTD_START}`),
+    searchTotal(token, "/search/issues", `org:${slug} type:issue created:>=${YTD_START}`),
+    paginatedCount(token, `/orgs/${slug}/repos`, { type: "all" }),
+  ]);
 
   const total = commits + pullRequests + issues;
-  const activeContributors = envNumber("INCREDIBUILD_ACTIVE_CONTRIBUTORS") ?? 0;
+  const activeContributors = envNumber("GITHUB_ORG_ACTIVE_CONTRIBUTORS") ?? 0;
   const repositories =
-    envNumber("INCREDIBUILD_REPOSITORIES") ??
+    envNumber("GITHUB_ORG_REPOSITORIES") ??
     repositoryCount ??
     (org.public_repos ?? 0) + (org.total_private_repos ?? org.owned_private_repos ?? 0);
 
-  const contributorSource = envNumber("INCREDIBUILD_ACTIVE_CONTRIBUTORS")
-    ? "active contributor count from INCREDIBUILD_ACTIVE_CONTRIBUTORS"
-    : "active contributor count not available; set INCREDIBUILD_ACTIVE_CONTRIBUTORS for Peter Density";
+  const contributorSource = envNumber("GITHUB_ORG_ACTIVE_CONTRIBUTORS")
+    ? "active contributor count from GITHUB_ORG_ACTIVE_CONTRIBUTORS"
+    : "active contributor count not available; set GITHUB_ORG_ACTIVE_CONTRIBUTORS for Peter Density";
+
+  const displayName =
+    envString("GITHUB_ORG_DISPLAY_NAME") ?? org.name ?? org.login ?? slug;
 
   return {
-    ...MOCK_FIXTURES.incredibuild,
-    org: "incredibuild",
-    orgDisplayName: envString("INCREDIBUILD_DISPLAY_NAME") ?? org.name ?? "Incredibuild",
+    org: slug,
+    orgDisplayName: displayName,
+    benchmarkUser: "steipete",
+    date: "2026-05-17",
+    scope: "org",
+    cohort: {
+      label: "Live org",
+      sizeBand: "mid-size",
+      exposure: "mixed",
+    },
+    ytdStart: YTD_START,
     visibility: {
       mode: "private",
       confidence: total > 0 ? "high" : "medium",
       completeness: total > 0 ? 0.92 : 0.35,
-      note: `Token-backed GitHub Search counts for @${org.login ?? orgSlug}. Includes private repos visible to the token; ${contributorSource}.`,
+      note: `Token-backed GitHub Search counts for @${org.login ?? slug}. Includes private repos visible to the token; ${contributorSource}.`,
     },
     orgYtd: {
       total,
@@ -93,17 +107,37 @@ async function getIncredibuildFixture(token: string): Promise<SnapshotFixture> {
     forecast: {
       orgYearEndTotal: projectedYearEnd(total),
       peterYearEndTotal: PETER_YEAR_END_REFERENCE,
-      remainingDays: MOCK_FIXTURES.incredibuild.forecast.remainingDays,
+      remainingDays: REMAINING_DAYS,
     },
   };
 }
 
-function getIncredibuildErrorFixture(reason: string): SnapshotFixture {
+function getLiveOrgErrorFixture(slug: string, reason: string): SnapshotFixture {
   return {
-    ...MOCK_FIXTURES.incredibuild,
+    org: slug,
+    orgDisplayName: slug,
+    benchmarkUser: "steipete",
+    date: "2026-05-17",
+    scope: "org",
+    cohort: {
+      label: "Live org",
+      sizeBand: "mid-size",
+      exposure: "mixed",
+    },
+    ytdStart: YTD_START,
     visibility: {
-      ...MOCK_FIXTURES.incredibuild.visibility,
-      note: `GitHub token is configured, but Incredibuild could not be loaded: ${reason}`,
+      mode: "private",
+      confidence: "low",
+      completeness: 0,
+      note: `GitHub token is configured, but @${slug} could not be loaded: ${reason}`,
+    },
+    orgYtd: { total: 0, commits: 0, pullRequests: 0, issues: 0, reviews: 0, other: 0 },
+    peterYtd: { ...PETER_YTD_REFERENCE },
+    orgMeta: { activeContributors: 0, repositories: 0, privateReposIncluded: false },
+    forecast: {
+      orgYearEndTotal: 0,
+      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
+      remainingDays: REMAINING_DAYS,
     },
   };
 }
@@ -172,6 +206,10 @@ function githubFetch(
 
 function githubToken(): string | undefined {
   return envString("GITHUB_TOKEN") ?? envString("GH_TOKEN");
+}
+
+function normalizeSlug(slug: string): string {
+  return slug.trim().toLowerCase().replace(/^@/, "");
 }
 
 function envString(name: string): string | undefined {

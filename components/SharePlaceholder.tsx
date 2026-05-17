@@ -14,16 +14,11 @@ export function SharePlaceholder({ snapshot, onChallenge }: Props) {
     snapshot.scores.gap >= 0
       ? `Ahead of @steipete by ${snapshot.scores.gap.toLocaleString()} GitHub-visible contributions since Jan 1, 2026.`
       : `Trailing @steipete by ${Math.abs(snapshot.scores.gap).toLocaleString()} contributions since Jan 1, 2026. Still time to meme harder.`;
-  const challenge =
-    needsConnection
-      ? "Connect the real org to calculate the score."
-      : snapshot.org === "incredibuild"
-        ? "Can your R&D beat that?"
-      : snapshot.org === "islo-labs"
-        ? "Dangerously close to Peter-class. Can your R&D cross 1.00?"
-        : snapshot.scores.peterIndex >= 1
-          ? "More than one Peter. Terrifying."
-          : "Peter still wins. For now.";
+  const challenge = needsConnection
+    ? "Connect the real org to calculate the score."
+    : snapshot.scores.peterIndex >= 1
+      ? "More than one Peter. Terrifying."
+      : "Peter still wins. For now.";
 
   return (
     <section className="relative overflow-hidden rounded-[2rem] border border-amber-300/20 bg-[linear-gradient(135deg,rgba(251,191,36,0.13),rgba(255,255,255,0.045)_45%,rgba(125,211,252,0.06))] p-5 sm:p-6 shadow-[0_30px_100px_rgba(0,0,0,0.42)]">
@@ -85,7 +80,7 @@ export function SharePlaceholder({ snapshot, onChallenge }: Props) {
               </p>
               <p className="mt-4 max-w-xl text-sm sm:text-base text-zinc-400 leading-snug">
                 {needsConnection
-                  ? "No public @incredibuild org was found. Provide the GitHub org slug or install the app."
+                  ? "Provide the GitHub org slug via GITHUB_ORG to calculate a live score."
                   : `#${snapshot.scores.totalRank ?? "?"} overall · ${snapshot.cohort.label} · ${sub} ${challenge}`}
               </p>
             </div>

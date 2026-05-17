@@ -5,7 +5,6 @@ import { CategoryTable } from "@/components/CategoryTable";
 import { ComparisonStrip } from "@/components/ComparisonStrip";
 import { Hero } from "@/components/Hero";
 import { Leaderboard } from "@/components/Leaderboard";
-import { OrgComparison } from "@/components/OrgComparison";
 import { SharePlaceholder } from "@/components/SharePlaceholder";
 import { TrustPanel } from "@/components/TrustPanel";
 import {
@@ -21,15 +20,10 @@ const CHIP_META: Record<
   string,
   { label: string; hint?: string }
 > = {
-  incredibuild: { label: "Incredibuild", hint: "Ahead, but Peter Density keeps it funny" },
-  "islo-labs": { label: "Islo.dev", hint: "Smaller org, dangerous density" },
-  supabase: { label: "Supabase", hint: "Peter-class momentum" },
-  microsoft: { label: "Microsoft", hint: "Industrialized Peter energy" },
-  google: { label: "Google", hint: "Public Google org family" },
-  awslabs: { label: "AWS", hint: "AWS public org family" },
-  vercel: { label: "Vercel", hint: "Collaborative lanes pop" },
-  linear: { label: "Linear", hint: "Private-heavy public preview" },
-  demo: { label: "Acme Corp", hint: "Catch-up storyline" },
+  supabase: { label: "Supabase", hint: "Sub-Peter density" },
+  microsoft: { label: "Microsoft", hint: "More than one Peter" },
+  google: { label: "Google", hint: "Two-thirds of a Peter" },
+  awslabs: { label: "AWS", hint: "One-third of a Peter" },
 };
 
 type Props = {
@@ -71,7 +65,7 @@ export function PeterDemo({
   }, [allSnapshots, snapshot]);
   const heroOrgs = useMemo(
     () =>
-      DEMO_ORG_ORDER.slice(0, 5).map((slug) => ({
+      DEMO_ORG_ORDER.map((slug) => ({
         slug,
         label: CHIP_META[slug]?.label ?? slug,
       })),
@@ -149,7 +143,6 @@ export function PeterDemo({
                 cohortMedianPeters={cohortMedianPeters}
               />
               <Leaderboard activeOrg={resolvedSlug} snapshots={allSnapshots} />
-              <OrgComparison snapshots={allSnapshots} />
 
               <blockquote className="relative overflow-hidden rounded-[1.75rem] border border-white/10 bg-black/35 px-5 py-5 sm:px-6 text-sm sm:text-base leading-relaxed text-zinc-300 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
                 <div className="absolute right-6 top-4 text-6xl font-semibold tracking-[-0.08em] text-white/[0.035]">

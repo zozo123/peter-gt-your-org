@@ -49,78 +49,6 @@ function fixture(input: Omit<SnapshotFixture, "benchmarkUser" | "date" | "ytdSta
 }
 
 export const MOCK_FIXTURES: Record<string, SnapshotFixture> = {
-  incredibuild: fixture({
-    org: "incredibuild",
-    orgDisplayName: "Incredibuild",
-    scope: "org",
-    cohort: {
-      label: "DevTools",
-      sizeBand: "mid-size",
-      exposure: "private-heavy",
-    },
-    visibility: {
-      mode: "public",
-      confidence: "low",
-      completeness: 0,
-      note: "No verified public GitHub org found at @incredibuild. Connect the real org to calculate.",
-    },
-    orgYtd: {
-      total: 0,
-      commits: 0,
-      pullRequests: 0,
-      issues: 0,
-      reviews: 0,
-      other: 0,
-    },
-    peterYtd: { ...PETER_YTD_REFERENCE },
-    orgMeta: {
-      activeContributors: 0,
-      repositories: 0,
-      privateReposIncluded: false,
-    },
-    forecast: {
-      orgYearEndTotal: 0,
-      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
-      remainingDays: REMAINING_DAYS,
-    },
-  }),
-
-  "islo-labs": fixture({
-    org: "islo-labs",
-    orgDisplayName: "Islo.dev",
-    scope: "org",
-    cohort: {
-      label: "Startup R&D",
-      sizeBand: "startup",
-      exposure: "mixed",
-    },
-    visibility: {
-      mode: "public",
-      confidence: "high",
-      completeness: 0.82,
-      note: "Verified public GitHub Search counts for @islo-labs.",
-    },
-    orgYtd: {
-      total: 4_518,
-      commits: 2_721,
-      pullRequests: 1_639,
-      issues: 158,
-      reviews: 0,
-      other: 0,
-    },
-    peterYtd: { ...PETER_YTD_REFERENCE },
-    orgMeta: {
-      activeContributors: 28,
-      repositories: 5,
-      privateReposIncluded: false,
-    },
-    forecast: {
-      orgYearEndTotal: projectedYearEnd(4_518),
-      peterYearEndTotal: PETER_YEAR_END_REFERENCE,
-      remainingDays: REMAINING_DAYS,
-    },
-  }),
-
   supabase: fixture({
     org: "supabase",
     orgDisplayName: "Supabase",
@@ -279,8 +207,6 @@ const SNAPSHOTS_BY_SLUG = Object.fromEntries(
 ) as Record<string, Snapshot>;
 
 export const DEMO_ORG_ORDER = [
-  "incredibuild",
-  "islo-labs",
   "supabase",
   "microsoft",
   "google",
@@ -288,8 +214,6 @@ export const DEMO_ORG_ORDER = [
 ] as const;
 
 const ORG_ALIASES: Record<string, string> = {
-  islo: "islo-labs",
-  "islo.dev": "islo-labs",
   aws: "awslabs",
   amazon: "awslabs",
   googlecloudplatform: "google",

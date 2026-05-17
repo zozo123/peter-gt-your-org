@@ -32,10 +32,6 @@ Type any org slug (`supabase`, `microsoft`, `awslabs`, `vercel`, …) and the pa
 
 ![Comparison strip](./docs/screens/comparison.png)
 
-### GTM demo: side-by-side orgs
-
-![Org comparison](./docs/screens/org-comparison.png)
-
 ### Share card + category breakdown + methodology
 
 ![Share, category, trust](./docs/screens/share-trust.png)
@@ -73,11 +69,11 @@ The token is read **server-side only** — it is never sent to the browser. It's
 
 | Var | Required | What it does |
 | --- | --- | --- |
-| `GITHUB_TOKEN` *(or `GH_TOKEN`)* | optional | Enables private-repo counts. Without it, the app runs in public-preview mode. |
-| `INCREDIBUILD_GITHUB_ORG` | optional | Override the org slug to query (default `Incredibuild-RND`). |
-| `INCREDIBUILD_ACTIVE_CONTRIBUTORS` | optional | Denominator for Peter Density. If unset, density isn't shown for the live org. |
-| `INCREDIBUILD_REPOSITORIES` | optional | Override the repo count surfaced in the trust panel. |
-| `INCREDIBUILD_DISPLAY_NAME` | optional | Friendly name shown in the UI. |
+| `GITHUB_TOKEN` *(or `GH_TOKEN`)* | for live mode | Server-only token used to call GitHub Search + Orgs APIs. |
+| `GITHUB_ORG` | for live mode | Org slug to live-fetch (e.g. `vercel`). Added to the leaderboard as a live row. |
+| `GITHUB_ORG_ACTIVE_CONTRIBUTORS` | optional | Denominator for Peter Density. If unset, density isn't shown for the live org. |
+| `GITHUB_ORG_REPOSITORIES` | optional | Override the repo count surfaced in the trust panel. |
+| `GITHUB_ORG_DISPLAY_NAME` | optional | Friendly name shown in the UI. Defaults to the GitHub org's name. |
 
 Copy `.env.example` to `.env.local` to set these locally.
 
@@ -126,10 +122,10 @@ Next.js 15 auto-detects on Vercel — no `vercel.json` needed. To enable private
 app/             Next.js App Router entry + global styles
 components/      All UI (Hero, Leaderboard, ComparisonStrip, ...)
 lib/
-  githubIncredibuild.ts   Server-only GitHub API calls
-  mockSnapshots.ts        Public-preview fixtures
-  peterMath.ts            Peter Index / Density / tiering math
-  types.ts                Snapshot / fixture types
+  liveGithub.ts      Server-only GitHub API calls (token+org → live row)
+  mockSnapshots.ts   Public-preview fixtures
+  peterMath.ts       Peter Index / Density / tiering math
+  types.ts           Snapshot / fixture types
 docs/screens/    README screenshots
 ```
 

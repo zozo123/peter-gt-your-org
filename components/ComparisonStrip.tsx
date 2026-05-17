@@ -47,7 +47,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
               What we need
             </p>
             <div className="mt-4 grid gap-3">
-              <VerifyStep number="1" title="GitHub org slug" text="Example: supabase, islo-labs, awslabs." />
+              <VerifyStep number="1" title="GitHub org slug" text="Example: supabase, microsoft, awslabs." />
               <VerifyStep number="2" title="Org family mapping" text="For Google/AWS-scale orgs, define which public orgs count." />
               <VerifyStep number="3" title="Read-only install later" text="Private repos and reviews require authenticated collection." />
             </div>
@@ -84,7 +84,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
             <p className="mt-5 max-w-2xl text-sm sm:text-base text-zinc-300 leading-relaxed">
               {needsConnection ? (
                 <>
-                  I could not verify a public GitHub org at <span className="text-white">@incredibuild</span>.
+                  I could not verify a public GitHub org at <span className="text-white">@{snapshot.org}</span>.
                   Connect the real org or provide the slug to calculate a real 2026 YTD Peter score.
                 </>
               ) : (
@@ -182,7 +182,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
           hint={
             hasContributorCount
               ? `${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors`
-              : "Set INCREDIBUILD_ACTIVE_CONTRIBUTORS"
+              : "Set GITHUB_ORG_ACTIVE_CONTRIBUTORS"
           }
           accent="zinc"
         />
@@ -212,7 +212,7 @@ export function ComparisonStrip({ snapshot, cohortMedianPeters }: Props) {
           <p className="text-sm text-zinc-400">
             {hasContributorCount
               ? `${snapshot.orgMeta.activeContributors.toLocaleString()} active contributors · `
-              : "Set INCREDIBUILD_ACTIVE_CONTRIBUTORS · "}
+              : "Set GITHUB_ORG_ACTIVE_CONTRIBUTORS · "}
             {snapshot.orgMeta.repositories.toLocaleString()} repos ·{" "}
             {snapshot.orgMeta.privateReposIncluded ? "includes private" : "public snapshot"}
             {hasContributorCount ? ` · ${densityTier}` : ""}

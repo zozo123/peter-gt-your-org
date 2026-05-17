@@ -52,7 +52,7 @@ export function Hero({
             <input
               value={inputValue}
               onChange={(event) => onInputChange(event.target.value)}
-              placeholder="github org slug (e.g. incredibuild, islo-labs, awslabs)"
+              placeholder="github org slug (e.g. supabase, microsoft, awslabs)"
               className="min-h-13 flex-1 rounded-2xl bg-white/[0.035] px-4 text-sm text-white placeholder:text-zinc-600 outline-none transition-colors focus:bg-white/[0.07]"
             />
             <button
@@ -163,8 +163,8 @@ export function Hero({
             </div>
 
             <div className="rounded-2xl border border-white/10 bg-white/[0.04] p-4 text-sm text-zinc-300">
-              Verified public rows rank immediately. Incredibuild stays as a “connect the real
-              org” example until its GitHub slug is known.
+              Verified public rows rank immediately. Set GITHUB_TOKEN + GITHUB_ORG to plug
+              your own org into the leaderboard.
             </div>
           </div>
         </div>
