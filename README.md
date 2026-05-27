@@ -36,9 +36,6 @@ Type any org slug (`supabase`, `microsoft`, `awslabs`, `vercel`, …) and the pa
 
 ![Share, category, trust](./docs/screens/share-trust.png)
 
-### Mobile
-
-<img src="./docs/screens/mobile.png" alt="Mobile view" width="320" />
 
 ---
 
