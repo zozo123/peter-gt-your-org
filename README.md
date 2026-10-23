@@ -5,10 +5,6 @@
 A Next.js demo that takes verified 2026 YTD GitHub activity (commits, PRs, issues) and prices it in **Peters** — where `1 Peter = @steipete's YTD output as a solo developer`. It's part benchmark, part roast, part trust-building exercise about what GitHub-visible metrics can and can't say about an engineering org.
 
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fzozo123%2Fpeter-gt-your-org&project-name=peter-gt-your-org&repository-name=peter-gt-your-org)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
-[![Next.js 15](https://img.shields.io/badge/Next.js-15.5-black?logo=next.js)](https://nextjs.org/)
-[![React 19](https://img.shields.io/badge/React-19-149eca?logo=react)](https://react.dev/)
-[![Tailwind 4](https://img.shields.io/badge/Tailwind-4-38bdf8?logo=tailwindcss)](https://tailwindcss.com/)
 
 ![Hero](./docs/screens/hero-section.png)
 
@@ -16,7 +12,7 @@ A Next.js demo that takes verified 2026 YTD GitHub activity (commits, PRs, issue
 
 ## What you get
 
-Type any org slug (`supabase`, `microsoft`, `awslabs`, `vercel`, …) and the page renders:
+Pick one of the snapshot orgs (`supabase`, `microsoft`, `google`, `awslabs`), or set `GITHUB_TOKEN` and `GITHUB_ORG` to add your own org as a live row. The page renders:
 
 - **Total Peters** — your YTD verified GitHub motion ÷ Peter's.
 - **Peter Density** — Peters per active contributor. Keeps big orgs honest.
@@ -48,7 +44,7 @@ npm install
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000). No env vars required — the public preview ships with verified 2026 YTD snapshots for Supabase, Microsoft, Google, AWS, Vercel, Linear and a couple of demo orgs.
+Open [http://localhost:3000](http://localhost:3000). No env vars required: the public preview ships GitHub snapshots taken 2026-05-17 for Supabase, Microsoft, Google (with GoogleCloudPlatform) and AWS (aws + awslabs).
 
 ---
 
@@ -80,7 +76,7 @@ Copy `.env.example` to `.env.local` to set these locally.
 
 - **Window**: 2026 YTD — everything since `2026-01-01`.
 - **What counts**: verified commits, pull requests, and issues created in the window. Reviews and other signals are folded in for orgs where the data is available.
-- **Peter baseline**: [@steipete](https://github.com/steipete)'s public GitHub activity over the same window, treated as `1.0 Peters`.
+- **Peter baseline**: [@steipete](https://github.com/steipete)'s full 2026 YTD contribution-graph total (203,976 events as of 2026-05-17, about 83% from private repos), treated as `1.0 Peters`. Orgs are counted from public data only, so the comparison is deliberately biased toward Peter.
 - **Tiers**:
   - `< 0.1` — GitHub Intern Energy
   - `0.1 – 0.5` — Warming Up
@@ -132,4 +128,4 @@ MIT — see [LICENSE](./LICENSE).
 
 ---
 
-_Built as a riff on [@steipete](https://github.com/steipete)'s legendary solo-developer commit graphs. Peter, if you're reading this: you're the unit. Sorry._
+_Built as a riff on [@steipete](https://github.com/steipete)'s public solo-developer commit graphs. Peter, if you're reading this: you're the unit. Sorry._
